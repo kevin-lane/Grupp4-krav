@@ -1,8 +1,14 @@
 import React from 'react'
+import Navbar from '../components/Navbar'
+import Gameboard from '../components/Gameboard'
 
 function Home() {
   return (
-    <div>Home</div>
+    <div>
+      <Navbar/>
+      <Gameboard />
+      Home
+      </div>
   )
 }
 
