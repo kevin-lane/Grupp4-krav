@@ -29,7 +29,7 @@ function Gameboard() {
     <Div>
 
          {array.map((array, id) => (
-          <div className="container" key={id}>{array}</div>
+          <div className="container" key={id}>hej</div>
         ))}
 
 
