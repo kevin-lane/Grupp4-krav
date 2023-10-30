@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import styled from 'styled-components';
-import json from '../../public/data.json';
+import json from './data.json';
 
 const array = []
 
@@ -16,11 +16,11 @@ function Gameboard() {
 
   console.log(json.board.tiles.map(index => index));
   let table = document.getElementById('gameboardtable');
-  let row = json.board.rows;
-  let col = json.board.cols;
+  let row = 8;
+  let col = 16;
   for (let i = 0; i < row; i++) {
-    for (let j = i; j < col; j++) {
-      array.push(j)
+    for (let j = 0; j < col; j++) {
+      array.push(json.board.tiles[j])
     }
   }
   console.log(json.board.tiles);
@@ -76,6 +76,7 @@ grid-template-rows: repeat(17, auto);
 display: grid;
 width: 100px;
 gap: 2px;
+
 `
 
 const Circle = styled.div`
