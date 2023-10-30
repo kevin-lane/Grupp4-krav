@@ -2,3 +2,19 @@
   color: red;
   border: 1rem solid black;
 }
+
+.container1 {
+    color: blue;
+    border: 5px solid blue;
+}
+
+.container2 {
+    color: yellow;
+    border: 5px solid yellow;
+}
+
+.cont {
+    color: red;
+    background-color: red;
+    border: 3rem solid red;
+}
