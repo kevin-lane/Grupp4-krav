@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import styled from 'styled-components';
+import json from '../../public/data.json';
 
 
 
