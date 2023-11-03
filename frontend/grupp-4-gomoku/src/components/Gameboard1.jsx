@@ -44,16 +44,55 @@ function Gameboard() {
 
          //Check Check vertically
          let count = 0;
-         for (let i = 0; i < boards[i]; i++) {
+         for (let i = 0; i < boards.length; i++) {
             for( let j = 0; j < boards.length; j++){
-                if (boards[i][j] === currentPlayer) {
+                if (boards[j][i] === currentPlayer) {
                     count++
                     if (count === minInRow) return true
                 } else {
                     count = 0;
                 }
-         }
-        }
+            }
+          }
+
+          //Check diagonally
+          let r;
+          let c;
+          for (let i = 0; i < boards.length; i++) {
+            let count = 0;
+            for (let j = 0; j < boards.length; j++) {
+              r = i;
+              c = j;
+              break;
+            }
+          }
+          console.log(boards);
+
+          let dif = r - c;
+          let sum = r + c;
+          let ldiag = "";
+          let rdiag = "";
+
+          for (let i = 0; i < boards.length; i++) {
+            let count = 0;
+            for (let j = 0; j < boards.length; j++) {
+              if(boards[i][j] === currentPlayer){
+                if (dif === i - j)
+                {
+                  count++;
+                  ldiag = ldiag+boards[i][j]+" ";
+                  if (count === minInRow) return true;
+
+                }
+                else if (sum === i + j)
+                {
+                  count++;
+                  rdiag = rdiag + boards[i][j]+" ";
+                  if (count === minInRow) return true;
+                }
+              }
+            }
+          }
 
      }
 
