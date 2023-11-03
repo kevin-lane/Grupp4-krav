@@ -6,9 +6,7 @@ import Gameboard1 from '../components/Gameboard1'
 function Home() {
   return (
     <div>
-      <Navbar/>
       <Gameboard1 />
-      Home
       </div>
   )
 }

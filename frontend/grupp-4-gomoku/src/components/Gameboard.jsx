@@ -45,6 +45,10 @@ function Gameboard() {
       setPlayerTurn(1);
     }
 
+ //Läs denna
+    // const currentPlayer = useMemo(() => {
+    //     return currentPlayerId === player1.id ? player1 : player2;
+    // }, [currentPlayerId]);
 
 
     setBoo(true)

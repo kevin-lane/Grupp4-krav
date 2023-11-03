@@ -1,17 +1,16 @@
+import styled from "styled-components";
 
-import styled from "styled-components"
 
 function Navbar() {
+
   return (
     <Navigationbar>
-        <button>New Game</button>
+        <button>QUIT GAME</button>
+        <button onClick={refresh}>NEW GAME</button>
     </Navigationbar>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;
 
 
-const Navigationbar = styled.div`
-
-`
