@@ -1,17 +1,18 @@
-import { config } from 'dotenv';
-import pkg from 'pg';
+require('dotenv').config();
+const pkg = require('pg');
+const app = require('./server.js');
 const { Client } = pkg;
+var path = require('path');
 //Hämtar express
 const express = require('express');
-const app = express();
 
-config()
+
 //Refererar till port
 const PORT = process.env.PORT || 3000;
 
 
 //Säg till att det kommer i json fromat.
-app.use(express.json());
+
 
 const client = new Client({
   database: process.env.PGDATABASE,
@@ -21,23 +22,9 @@ const client = new Client({
   user: process.env.PGUSER
 })
 
-//Check resonspe in console
-app.use('/', (req, res) => {
-    console.log({query: req.query});
-    console.log({body: req.body});
-    console.log({params: req.params});
-    console.log({header: req.headers});
-    res.send({status:"success"});
 
-})
-
-
-
-//Get request route
-app.get('/create-game', (req, res) => {
-    res.json({status: "sucess at create-game"});
-});
-
+// kan också vara /api/router i tom string
+app.use('', require('./routes/gomoku_routes.js'))
 
 //Lyssnar på porten
 
