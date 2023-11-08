@@ -1,47 +1,76 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import data from '../../public/data.json';
-
-
-const player1 = data.player1;
-const player2 = data.player2;
+import axios from 'axios';
+import '../App.css'
 
 
 function Gameboard() {
 
+    useEffect(() => {
+        // Define async function inside useEffect
+        const fetchGameData = async () => {
+          try {
+            const response = await axios.get('http://localhost:3000/create_game');
+            const gameData = response.data;
+            setPlayer1(gameData.player1);
+            setPlayer2(gameData.player2);
+            setGameState(gameData.state);
+            setBoards(gameData.board.tiles);
+            setMinInRow(gameData.board.minInRow);
+            setCurrentPlayer(gameData.player1 === 1 ? gameData.player1 : gameData.player2);
+            setRound(gameData.round);
+
+
+            if (gameData.state.new) {
+                resetGame();
+              }
+
+          } catch (error) {
+            console.error('There was an error fetching the game data', error);
+          }
+        };
+
+        const initialClickedState = {};
+        for (let i = 0; i < boards.length; i++) {
+            for (let j = 0; j < boards[i].length; j++) {
+                initialClickedState[`${i}-${j}`] = false;
+            }
+        }
+        setClickedIndex(initialClickedState);
+        // Call the function
+        fetchGameData();
+      }, []);
+
+
+    const [player1, setPlayer1] = useState(null);
+    const [player2, setPlayer2] = useState(null);
     const [boards, setBoards] = useState([]);
-    const [gameState, setGameState] = useState("");
+    const [gameState, setGameState] = useState(null);
     const [gameOver, setGameOver] = useState(false);
     const [winner, setWinner] = useState(null);
+    const [minInRow, setMinInRow] = useState(null)
     const [currentPlayer, setCurrentPlayer] = useState(player1);
-    const [gameId, setGameId] = useState(data.id);
+    // const [gameId, setGameId] = useState(data.id);
     const [round, setRound] = useState(0);
-
-    const minInRow = data.board.minInRow
-
+    const [clickedIndex, setClickedIndex] = useState({});
+    const [clickedTiles, setClickedTiles] = useState({});
 
     //Starta om spelet
     const resetGame = () => {
         const newBoard = Array(17).fill(null).map(() => Array(17).fill(0));
         setBoards(newBoard);
-        setGameState(data.state.new);
+        setGameState(prevState => ({ ...prevState, new: true }));
         setCurrentPlayer(player1);
         setGameOver(false);
-        setGameId(data.id)
         setRound(0)
         setWinner(null)
+        setClickedIndex(true)
         };
 
-    // // //Set game state
-    // if (gameState === data.state.new) {
-    //     resetGame
-    // } else if (gameState === data.state.tie) {
-
-    // }
-
-    //Använda för att sätta player1 och 2 ifrån JSON
-    const getCurrentPlayer = () => currentPlayer === player1 ? player1: player2;
-
+    const getCurrentPlayer = () => {
+//Retunerar seplare
+  return currentPlayer || { name: 'Waiting for player...' };
+};
 
     const move = (rowIndex, colIndex) => () => {
 
@@ -53,6 +82,10 @@ function Gameboard() {
         const updatedBoards = [...boards];
         updatedBoards[rowIndex][colIndex] = currentPlayer;
         setBoards(updatedBoards);
+        setClickedTiles({
+            ...clickedTiles,
+            [`${rowIndex}-${colIndex}`]: true,
+        });
         // console.log(currentPlayer.id);
         setRound(prevRound => currentPlayer === player1 ? prevRound + 1 : prevRound);
 
@@ -76,13 +109,6 @@ function Gameboard() {
 
     };
 
-
-  /**
-   * Kolla win condition horizotnally
-   * @param {*} boards
-   * @param {*} currentPlayer
-   * @returns
-   */
 
     const checkWinCondition = (boards, currentPlayer) => {
 
@@ -162,17 +188,29 @@ function Gameboard() {
      }
 
      const tieRestart = () => {
-        setGameState(data.state.tie)
+        setGameState(prevState => ({ ...prevState, tie: true }));
         setGameOver(true);
         setRound(0)
         setWinner(null)
         setBoards(Array(17).fill(null).map(() => Array(17).fill(0)))
+        setClickedIndex(true)
      }
 
-    useEffect(() => {
-        setBoards(data.board.tiles);
-        setGameId(data.id)
-    }, []);
+     const handleClick = (rowIndex, colIndex) => () => {
+        if(gameOver){
+            return;
+        }
+        setClickedIndex(state => ({
+            ...state,
+            [`${rowIndex}-${colIndex}`]: !state[`${rowIndex}-${colIndex}`]  // Toggle the clicked state
+        }));
+    };
+
+    const isKlickVisible = (rowIndex, colIndex) => {
+        return !clickedIndex[`${rowIndex}-${colIndex}`];  // Return true if not clicked, false if clicked
+    };
+
+
 
     return (
         <>
@@ -194,20 +232,30 @@ function Gameboard() {
                  {boards.map((row, rowIndex) => (
                      row.map((col, colIndex) => (
                      <Tile key={`${rowIndex}-${colIndex}`}>
-                       {rowIndex >= 1 && colIndex >= 1 && rowIndex <= 16 && colIndex <= 16 && (
-                           <Klick key={`${rowIndex}-${colIndex}`} onClick={move(rowIndex, colIndex)}>
-                              <Kryss>{col === player1 ? "X" : col === player2 ? "O" : ""}</Kryss>
-                          </Klick>
-                           )}
+                       {rowIndex >= 1 && colIndex >= 1 && rowIndex <= 16 && colIndex <= 16 &&  (
+                           <Klick
+                           key={`${rowIndex}-${colIndex}`}
+                           onClick={() => {
+                            move(rowIndex, colIndex)();
+                            handleClick(rowIndex, colIndex)();
+                        }}
+                        style={{ display: isKlickVisible(rowIndex, colIndex) ? 'block' : 'none' }}
+                        >
+
+
+                  </Klick>
+                )}
+                   <Kryss
+                              >{col === player1 ? "X" : col === player2 ? "O" : ""}</Kryss>
                      </Tile>
                       ))
                     ))}
 
                 </Board>
                 <Result>
-                <div>Round: {round}</div>
+                <div>Drag: {round}</div>
          {/* Display current player namn, id och vem som vinner */}
-            <div>Tur att spela: {getCurrentPlayer().name} hurry ffs!!!!! We're waiting</div>
+            <div>Tur att spela: {getCurrentPlayer().name} </div>
 
 
             {gameOver && (
@@ -219,7 +267,7 @@ function Gameboard() {
     <TieContainer>
     <TieHeader>GAME OVER!</TieHeader>
     <TieBody>
-      <p>The game is a tie, we got no winner ☹ Do you want to play again?</p>
+      <p> Do you want to play again?</p>
       <button onClick={resetGame}>Yaaas</button>
       <button onClick={() => window.location.href = "/"}>No no man</button>
       </TieBody>
@@ -282,7 +330,7 @@ const Header = styled.h1`
 const Navigationbar = styled.div`
     border: 2px solid black;
     border-bottom: none;
-    width: 100%;
+    width: 99.3%;
 
 
 
@@ -308,22 +356,6 @@ const Container = styled.div`
     flex-direction: column;
     align-items: center;
     padding: 0%;
-  }
-`;
-
-const RulesContainer = styled.div`
-  width: 400px;
-  padding: 20px;
-  border: 2px solid black;
-  background-color: #f9f9f9;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  margin-left: 20px;
-  height: fit-content;
-
-  @media only screen and (max-width: 767px) {
-    width:280px;
-    margin-top: 10%;
   }
 `;
 
@@ -357,6 +389,24 @@ const Tile = styled.div`
 
 
 `;
+
+const Klick = styled.div`
+ background-color: rgba(214, 214, 214, 0.30);
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  margin-top: -50%;
+  margin-left: -50%;
+
+  @media only screen and (max-width: 767px) {
+  top: 40%;
+  left: 50%;
+  }
+`;
+
 const Kryss = styled.span`
   color: white;
   font-size: x-large;
@@ -364,26 +414,36 @@ const Kryss = styled.span`
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-115%, -86%);
 
-`;
-
-const Klick = styled.div`
-  background-color: none ;
-  width: 20px;
-  height: 20px;
-  position: absolute;
+  @media only screen and (max-width: 767px) {
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  margin-top: -50%;
-  margin-left: -50%;
+  left: 70%;
+  }
+
 `;
 
 const Result = styled.div`
 font-style: oblique;
 
 `
+
+const RulesContainer = styled.div`
+  width: 400px;
+  padding: 20px;
+  border: 2px solid black;
+  background-color: #f9f9f9;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-left: 20px;
+  height: fit-content;
+
+  @media only screen and (max-width: 767px) {
+    width:280px;
+    margin-top: 10%;
+  }
+`;
+
 
 const VictoryContainer = styled.div`
 width: 80%;
@@ -395,7 +455,7 @@ position: absolute; // Position it over the Board
   transform: translate(-50%, -50%); // Offset by its own dimensions
   z-index: 10; // Ensure it's above the Board
   padding: 20px; // Add some padding around the content
-  border-radius: 2px; // Optional: round the corners
+  border-radius: 2px;
   display: flex; // Use flexbox for centering content
   flex-direction: column; // Stack children vertically
   align-items: center; // Center children horizontally
@@ -422,8 +482,8 @@ font-size: 20px;
 `
 
 const TieContainer = styled.div`
-width: 80%;
-height: 30vh;
+width: 100%;
+height: 40vh;
 background-color: rgba(240, 240, 240, 0.9);
 position: absolute; // Position it over the Board
   top: 50%; // Center vertically
@@ -431,7 +491,7 @@ position: absolute; // Position it over the Board
   transform: translate(-50%, -50%); // Offset by its own dimensions
   z-index: 10; // Ensure it's above the Board
   padding: 10px; // Add some padding around the content
-  border-radius: 2px; // Optional: round the corners
+  border-radius: 2px;
   display: flex; // Use flexbox for centering content
   flex-direction: column; // Stack children vertically
   align-items: center; // Center children horizontally
