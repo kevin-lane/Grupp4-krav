@@ -3,10 +3,11 @@ const gameHandle = require('../controllers/game_controller.js');
 const express = require('express');
 const request = require('supertest');
 
-const mockRes = {
-    send: jest.fn(),
-  };
+
 describe('controller', () => {
+    const mockRes = {
+        send: jest.fn(),
+      };
 
     describe('when creating a game ', () => {
       const game = gameHandler;
@@ -25,24 +26,53 @@ describe('controller', () => {
     });
 
     describe('when sending game', () => {
-        const game = gameHandle.createGame;
+        const req = {};
+        const gamecreate = gameHandle.createGame(req, mockRes);
         const gameData = gameHandler
 
-        const req = {};
-    game(req, mockRes);
 
+   // gamecreate(req, mockRes);
 
         it('should have expected properties', () => {
             expect(mockRes.send).toHaveBeenCalledWith(gameData);
 
-          /*expect(game).toHaveProperty('id'); //Id of game generated server side
-          expect(game).toHaveProperty('name'); // A name that is displayed
-          expect(game).toHaveProperty('round'); // Which round we currently play
-          expect(game).toHaveProperty('player1'); // {id: uuid, name: name}
-          expect(game).toHaveProperty('player2');
-          expect(game).toHaveProperty('rows'); // How many rows our board has got
-          expect(game).toHaveProperty('cols'); // How many columns our board has got
-          expect(game).toHaveProperty('state'); // state of the game object = {playing, win1, win2, tie}*/
+
+        });
+      });
+
+      describe('when adding player', () => {
+
+        const gameadd = gameHandle.addPlayer;
+
+
+        const req = {};
+
+    gameadd(req, mockRes);
+
+
+
+        it('should have expected properties', () => {
+
+            expect(mockRes.send).toHaveBeenCalledWith({status: "added player"});
+
+
+
+        });
+      });
+
+      describe('when playing', () => {
+
+        const gameplay = gameHandle.play;
+
+        const req = {};
+
+    gameplay(req, mockRes);
+
+        it('should have expected properties', () => {
+
+            expect(mockRes.send).toHaveBeenCalledWith({status: "game started"});
+
+
         });
       });
   });

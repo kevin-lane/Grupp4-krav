@@ -12,9 +12,9 @@ exports.createGame = (req, res) =>{
 }
 
 exports.addPlayer = (req, res) =>{
-    res.json({status: "added player"});
+    res.send({status: "added player"});
 }
 
 exports.play = (req, res) =>{
-    res.json({status: "game started"});
+    res.send({status: "game started"});
 }
