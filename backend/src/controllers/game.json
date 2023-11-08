@@ -1,22 +1,21 @@
 {
-    "id": "015cdc04-4d22-46f7-8d8e-f1879bb9bf1b",
+    "id": "",
     "name": "empty game",
     "round": 256,
     "player": 1,
     "player1": {
         "id": "",
-        "name": "name1"
+        "name": ""
     },
     "player2": {
         "id": "",
-        "name": "name2"
+        "name": ""
     },
     "state": {
         "new": true,
         "playing": false,
         "tie": false,
-        "win": false,
-        "lose": false
+        "win": false
     },
     "board": {
         "minInRow": 5,
