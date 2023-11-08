@@ -12,8 +12,11 @@
         "name": "Kevin"
     },
     "state": {
-        "new": "new",
-        "tie": "tie"
+        "new": true,
+        "playing": false,
+        "tie": false,
+        "win": false,
+        "lose": false
     },
     "board": {
         "minInRow": 5,

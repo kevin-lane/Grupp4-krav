@@ -5,11 +5,11 @@
     "player": 1,
     "player1": {
         "id": "",
-        "name": ""
+        "name": "Kevin"
     },
     "player2": {
         "id": "",
-        "name": ""
+        "name": "Amar"
     },
     "state": {
         "new": true,
