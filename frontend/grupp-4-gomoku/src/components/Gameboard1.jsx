@@ -10,7 +10,7 @@ function Gameboard() {
         // Define async function inside useEffect
         const fetchGameData = async () => {
           try {
-            const response = await axios.get('http://localhost:3000/create_game');
+            const response = await axios.get('http://localhost:3000/create-game');
             const gameData = response.data;
             setPlayer1(gameData.player1);
             setPlayer2(gameData.player2);
