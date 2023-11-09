@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import '../App.css'
+import trophy from '../images/throphy.png'
 
 
 function Gameboard() {
@@ -306,10 +307,16 @@ function Gameboard() {
             <div>Tur att spela: {getCurrentPlayer().name} </div>
 
 
+
             {gameOver && (
   winner ? (
-
-        <VictoryHeader> {winner.name} won this game. </VictoryHeader>
+        <VictoryContainer>
+            <VictoryImage src={trophy} alt="Trophy" />
+            <VictoryHeader> {winner.name.toUpperCase()}  WON THIS GAME. </VictoryHeader>
+            <VictoryBody>
+            <button onClick={resetGame}>Play again?</button>
+            </VictoryBody>
+        </VictoryContainer>
 
   ) : (
     <TieContainer>
@@ -499,7 +506,7 @@ const RulesContainer = styled.div`
 const VictoryContainer = styled.div`
 width: 80%;
 height: 30vh;
-background-color: #f0f0f0;
+background-color: #ffffff;
 position: absolute; // Position it over the Board
   top: 50%; // Center vertically
   left: 50%; // Center horizontally
@@ -512,14 +519,28 @@ position: absolute; // Position it over the Board
   align-items: center; // Center children horizontally
   justify-content: center; // Center children vertically
   box-sizing: border-box; // Include padding in height & width
-  opacity: 0.9px;
 `
 
-const VictoryHeader = styled.h4`
+const VictoryImage = styled.img`
+  height: 80px; // Set the height of the image
+  width: 70px; // Set the width of the image
+`;
+
+const VictoryHeader = styled.div`
+padding-top: 10%;
 font-size: 20px;
 `
+
 const VictoryBody = styled.p`
 font-size: 20px;
+button {
+        margin: 5%;
+        background-color: black;
+        color: white;
+        width: 100%;
+        height: 30px;
+
+    }
 `
 
 const TieBody = styled.p`
