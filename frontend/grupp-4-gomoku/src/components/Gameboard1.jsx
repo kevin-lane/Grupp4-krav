@@ -54,6 +54,8 @@ function Gameboard() {
     const [round, setRound] = useState(0);
     const [clickedIndex, setClickedIndex] = useState({});
     const [clickedTiles, setClickedTiles] = useState({});
+      //By Kevin
+    const [startGame, setStartGame] = useState(false);
 
     //Starta om spelet
     const resetGame = () => {
@@ -66,6 +68,12 @@ function Gameboard() {
         setWinner(null)
         setClickedIndex(true)
         };
+
+        //Visa spelet (Kevin)
+        const startNewGame = () => {
+          setStartGame(true);
+          resetGame();
+        }
 
     const getCurrentPlayer = () => {
 //Retunerar seplare
@@ -260,12 +268,13 @@ function Gameboard() {
 
         <Container>
 
-        <Frame>
+    {startGame ?
+    (<Frame>
         <Navigationbar>
-        <button onClick={tieRestart}>QUIT GAME</button>
-        <button onClick={resetGame}>NEW GAME</button>
-    </Navigationbar>
-    <BoardWrapper>
+          <button onClick={tieRestart}>QUIT GAME</button>
+          <button onClick={resetGame}>NEW GAME</button>
+        </Navigationbar>
+        <BoardWrapper>
                 <Board>
                  {/* Loopa igenom varje row i boards arrayen */}
                  {boards.map((row, rowIndex) => (
@@ -314,18 +323,21 @@ function Gameboard() {
   )
 )}
         </Result>
-        </BoardWrapper>
-                </Frame>
-                <RulesContainer>
-    <h2>Spelregler</h2>
-    <div>
-      The player with the X checkers always plays first and must place the first checker at the central intersection of the board. The player with O checkers follows by placing the checker at one of the eight intersections adjacent to the black one. Once placed, the checkers cannot be moved or removed from the board.
-    </div>
-    <ol>
-      <li>The goal is to align 5 checkers of the same color, vertically, horizontally, or diagonally.</li>
-      <li>The player who starts has a slight advantage over the opponent. Therefore, it is preferable to play an even number of games, alternating the first player.</li>
-    </ol>
-  </RulesContainer>
+      </BoardWrapper>
+      </Frame>)
+      :
+      (<RulesContainer>
+          <h2>Spelregler</h2>
+          <div>
+            The player with the X checkers always plays first and must place the first checker at the       central intersection of the board. The player with O checkers follows by placing the checker at       one of the eight intersections adjacent to the black one. Once placed, the checkers cannot be       moved or removed from the board.
+          </div>
+          <ol>
+            <li>The goal is to align 5 checkers of the same color, vertically, horizontally, or diagonally.     </li>
+            <li>The player who starts has a slight advantage over the opponent. Therefore, it is preferable       to play an even number of games, alternating the first player.</li>
+          </ol>
+          <button onClick={startNewGame}>NEW GAME</button>
+      </RulesContainer>)
+    }
                 </Container>
                 </>
 
